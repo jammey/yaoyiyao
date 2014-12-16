@@ -1,0 +1,53 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+    <script src="jquery.mobile-1.4.4.min.js"></script>
+    <script src="jquery.js"></script>
+    <script src="jquery.mobile-1.4.4.min.js"></script>
+    <link href="main.css" rel="stylesheet" />
+</head>
+<body>
+    <input type="hidden" id="pageLoadingCount" value="0" />
+    <div data-role="page" id="pageIndex" data-theme="d">
+        <div data-role="header" data-position="fixed">
+            <a href="#" data-role="button" data-iconpos="right" data-icon="down1" id="aIndexCity" style="width:35px;">西安</a>
+            <h2>摇摇</h2>
+            <a id="pageIndex_btnTopRight" data-role="button" data-icon="flat-man" data-iconpos="notext" data-transition="slide"></a>
+        </div>
+        <div id="test"></div>
+        <script type="text/javascript">
+            var watchID;
+
+            //等设备准备完毕后，按250ms的间隔，定期返回加速度值
+            function onDeviceReady() {
+                var options = { frequency: 250 };
+                //onWatchSuccess和onWatchError是获取加速信息成功或失败的回调函数
+                watchID = navigator.accelerometer.watchAcceleration(onWatchSuccess, onWatchError, options);
+            }
+
+            //acceleration是加速对对象，包含设备在x,y,z轴上的加速度信息
+            function onWatchSuccess(acceleration) {
+                //判断x,y,z任意方向上的加速超过13即为摇动，超过4次就播放摇一摇的声音
+                if (Math.abs(acceleration.x) > 13 || Math.abs(acceleration.y) > 13 || Math.abs(acceleration.z) > 13) {
+                    shakeCount++;
+                    if (shakeCount > 3) {
+                        clearTimeout(timeoutFlag);
+                        $("#test").html("你刚才摇了我" + acceleration.x)
+                        shakeCount = 0;
+                    } else {
+                        //如果超时4秒没有摇动，重新开始计算次数
+                        if (timeoutFlag)
+                            clearTimeout(timeoutFlag);
+                        timeoutFlag = setTimeout(function () { shakeCount = 0 }, 4000);
+                    }
+                }
+            }
+        </script>
+        </div>
+    
+</body>
+</html>
